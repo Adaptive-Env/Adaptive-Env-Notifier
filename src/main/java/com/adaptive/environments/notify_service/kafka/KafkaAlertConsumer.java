@@ -40,24 +40,16 @@ public class KafkaAlertConsumer {
         try {
             AlertRecord alert = record.value();
 
-            AlertRecord alertRecord = AlertRecord.builder()
-                    .deviceId(alert.getDeviceId())
-                    .type(alert.getType())
-                    .severity(alert.getSeverity())
-                    .timestamp(alert.getTimestamp())
-                    .description(alert.getDescription())
-                    .build();
+            notifiers.forEach(notifier -> notifier.notify(alert));
 
-            notifiers.forEach(notifier -> notifier.notify(alertRecord));
+            log.info("[Kafka] Notification was sent for device: {}, type: {}, severity: {}",
+                    alert.getDeviceId(), alert.getDescription(), alert.getSeverity());
 
-            log.info("[Kafka] Alert saved for device: {}, type: {}, severity: {}",
-                    alert.getDeviceId(), alert.getType(), alert.getSeverity());
-
-            meterRegistry.counter("iot.alerts.persisted", "severity", alert.getSeverity().name()).increment();
+            meterRegistry.counter("iot.alerts.notify", "severity", alert.getSeverity().name()).increment();
 
         } catch (Exception e) {
-            log.error("[Kafka] Error while saving alert to DB", e);
-            meterRegistry.counter("iot.alerts.persist.error").increment();
+            log.error("[Kafka] Error while notifying", e);
+            meterRegistry.counter("iot.alerts.notify.error").increment();
         } finally {
             record.receiverOffset().acknowledge();
         }

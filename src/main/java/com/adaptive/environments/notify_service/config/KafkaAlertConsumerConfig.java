@@ -23,16 +23,17 @@ public class KafkaAlertConsumerConfig {
     public ReceiverOptions<String, AlertRecord> receiverOptions() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "iot-consumer-group");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "iot-notify-consumer-group");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.adaptive.environments.alert_service.model.AlertRecord");
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, AlertRecord.class.getName());
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         ReceiverOptions<String, AlertRecord> options = ReceiverOptions.create(props);
-        return options.subscription(java.util.List.of("alert-record"));
+        return options.subscription(java.util.List.of("iot.alerts"));
     }
 
     @Bean

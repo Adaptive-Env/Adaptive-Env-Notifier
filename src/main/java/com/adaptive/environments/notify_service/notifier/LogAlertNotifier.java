@@ -14,7 +14,7 @@ public class LogAlertNotifier implements AlertNotifier {
 
     @Override
     public void notify(AlertRecord alert) {
-        log.warn("[ALERT LOGGED] Device: {}, Type: {}, Severity: {}, Desc: {}",
-                alert.getDeviceId(), alert.getType(), alert.getSeverity(), alert.getDescription());
+        log.warn("[ALERT LOGGED] Device: {}, Severity: {}, Desc: {}",
+                alert.getDeviceId(), alert.getSeverity(), alert.getDescription());
     }
 }

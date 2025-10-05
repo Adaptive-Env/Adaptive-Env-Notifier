@@ -18,7 +18,7 @@ public class MailAlertNotifier implements AlertNotifier{
     @Value("${alert.mail.to}")
     private String recipient;
 
-    @Value("${spring.mail.username}")
+    @Value("${alert.mail.from}")
     private String sender;
 
     public MailAlertNotifier(JavaMailSender mailSender) {
@@ -31,7 +31,7 @@ public class MailAlertNotifier implements AlertNotifier{
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(recipient);
             helper.setFrom(sender);
-            helper.setSubject("IoT System Alert: " + alert.getType());
+            helper.setSubject("IoT System Alert: " + alert.getSeverity());
             helper.setText(buildEmailBody(alert), true);
 
             mailSender.send(message);
@@ -43,7 +43,6 @@ public class MailAlertNotifier implements AlertNotifier{
     private String buildEmailBody(AlertRecord alert) {
         return "<h3>⚠️ Alert Detected</h3>" +
                 "<p><strong>Device:</strong> " + alert.getDeviceId() + "</p>" +
-                "<p><strong>Type:</strong> " + alert.getType() + "</p>" +
                 "<p><strong>Severity:</strong> " + alert.getSeverity() + "</p>" +
                 "<p><strong>Timestamp:</strong> " + alert.getTimestamp() + "</p>" +
                 "<p><strong>Description:</strong> " + alert.getDescription() + "</p>";
