@@ -9,6 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @ConditionalOnProperty(prefix = "notifier.mail", name = "enabled", havingValue = "true")
 public class MailAlertNotifier implements AlertNotifier{
